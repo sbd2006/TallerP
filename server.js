@@ -4,56 +4,64 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // Permite recibir datos en formato JSON
+app.use(express.json());
 
-// 1. Conexión a tu base de datos XAMPP
+// Conexión a la base de datos
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root',      // Usuario por defecto de XAMPP
-    password: '',      // Contraseña vacía por defecto en XAMPP
+    user: 'root',
+    password: '',
     database: 'contact_list_db'
 });
 
 db.connect(err => {
-    if (err) {
-        console.error('Error conectando a la base de datos:', err);
-        return;
-    }
-    console.log('¡Conectado exitosamente a la base de datos MySQL!');
+    if (err) throw err;
+    console.log('¡Conectado a la base de datos MySQL!');
 });
 
-// --- RUTAS DE LA API ---
+// --- RUTAS BASADAS EN EL API_GUIDE.md ---
 
-// Obtener todos los contactos (GET)
-app.get('/contactos', (req, res) => {
+// GET /api/contacts - Obtener todos los contactos
+app.get('/api/contacts', (req, res) => {
     db.query('SELECT * FROM contactos', (err, results) => {
         if (err) return res.status(500).json(err);
         res.json(results);
     });
 });
 
-// Crear un nuevo contacto (POST)
-app.post('/contactos', (req, res) => {
-    const { nombre, apellido, telefono } = req.body;
-    const query = 'INSERT INTO contactos (nombre, apellido, telefono) VALUES (?, ?, ?)';
+// POST /api/contacts - Crear nuevo contacto
+app.post('/api/contacts', (req, res) => {
+    const { name, lastname, sex, phone, city, address } = req.body;
+    const query = 'INSERT INTO contactos (name, lastname, sex, phone, city, address) VALUES (?, ?, ?, ?, ?, ?)';
     
-    db.query(query, [nombre, apellido, telefono], (err, result) => {
+    db.query(query, [name, lastname, sex, phone, city, address], (err, result) => {
         if (err) return res.status(500).json(err);
-        res.json({ id: result.insertId, nombre, apellido, telefono });
+        res.json({ id: result.insertId, name, lastname, sex, phone, city, address });
     });
 });
 
-// Eliminar un contacto (DELETE)
-app.delete('/contactos/:id', (req, res) => {
+// DELETE /api/contacts/:id - Eliminar un contacto
+app.delete('/api/contacts/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM contactos WHERE id = ?', [id], (err) => {
         if (err) return res.status(500).json(err);
-        res.json({ mensaje: 'Contacto eliminado' });
+        res.json({ message: 'Contacto eliminado con éxito' });
     });
 });
 
-// 3. Iniciar el servidor
+// PUT /api/contacts/:id - Actualizar un contacto existente
+app.put('/api/contacts/:id', (req, res) => {
+    const { id } = req.params;
+    const { name, lastname, sex, phone, city, address } = req.body;
+    const query = 'UPDATE contactos SET name=?, lastname=?, sex=?, phone=?, city=?, address=? WHERE id=?';
+    
+    db.query(query, [name, lastname, sex, phone, city, address, id], (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ id, name, lastname, sex, phone, city, address });
+    });
+});
+
 const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor de contactos corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor de la API corriendo en http://localhost:${PORT}`);
 });
