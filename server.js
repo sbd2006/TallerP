@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Conexión a la base de datos
+
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -19,9 +19,7 @@ db.connect(err => {
     console.log('¡Conectado a la base de datos MySQL!');
 });
 
-// --- RUTAS BASADAS EN EL API_GUIDE.md ---
 
-// GET /api/contacts - Obtener todos los contactos
 app.get('/api/contacts', (req, res) => {
     db.query('SELECT * FROM contactos', (err, results) => {
         if (err) return res.status(500).json(err);
@@ -29,7 +27,7 @@ app.get('/api/contacts', (req, res) => {
     });
 });
 
-// POST /api/contacts - Crear nuevo contacto
+
 app.post('/api/contacts', (req, res) => {
     const { name, lastname, sex, phone, city, address } = req.body;
     const query = 'INSERT INTO contactos (name, lastname, sex, phone, city, address) VALUES (?, ?, ?, ?, ?, ?)';
@@ -40,7 +38,7 @@ app.post('/api/contacts', (req, res) => {
     });
 });
 
-// DELETE /api/contacts/:id - Eliminar un contacto
+
 app.delete('/api/contacts/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM contactos WHERE id = ?', [id], (err) => {
@@ -49,7 +47,7 @@ app.delete('/api/contacts/:id', (req, res) => {
     });
 });
 
-// PUT /api/contacts/:id - Actualizar un contacto existente
+
 app.put('/api/contacts/:id', (req, res) => {
     const { id } = req.params;
     const { name, lastname, sex, phone, city, address } = req.body;
