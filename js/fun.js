@@ -1,4 +1,4 @@
-// URL oficial según la guía de tu profesor
+
 const API_URL = 'http://localhost:3000/api/contacts';
 
 async function mostrarContatos() {
@@ -27,7 +27,7 @@ async function mostrarContatos() {
     }
 }
 
-// Capturar el envío del formulario
+
 document.getElementById("contactForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
@@ -56,8 +56,8 @@ document.getElementById("contactForm").addEventListener("submit", async function
             body: JSON.stringify(nuevoContacto)
         });
 
-        this.reset(); // Limpia el formulario después de enviar
-        mostrarContatos(); // Actualiza la vista en la pantalla
+        this.reset(); 
+        mostrarContatos(); 
     } catch (error) {
         console.error("Error al crear el contacto:", error);
     }
@@ -76,5 +76,5 @@ async function deletarContato(id) {
     }
 }
 
-// Iniciar la carga de contactos apenas se abre la página
+
 document.addEventListener("DOMContentLoaded", mostrarContatos);
